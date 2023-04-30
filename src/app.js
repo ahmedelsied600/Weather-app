@@ -1,8 +1,8 @@
 const express = require("express");
 const app = express();
 
-const forecast = require("./");
-const geoCode = require("");
+const forecast = require("./utils/forecast");
+const geoCode = require("./utils/geoCode");
 
 const port = 3020;
 const path = require("path");
@@ -10,6 +10,7 @@ const path = require("path");
 const PublicPath = path.join(__dirname, "/../public");
 const partialsPath = path.join(__dirname, "/../templates/partials");
 const viewsPath = path.join(__dirname, "/../templates/views");
+console.log(viewsPath);
 
 const hbs = require("hbs");
 // Method#1 - creating directory paths maually - static pages
@@ -48,13 +49,6 @@ app.set("view engine", "hbs");
 app.set("views", viewsPath);
 hbs.registerPartials(partialsPath);
 
-geoCode("new York", (result, error) => {
-  if (error) {
-    return console.log(error);
-  }
-  forecast(result, (res, err) => console.log(res || err));
-});
-
 app.get("", (req, res) => {
   res.render("index", {
     title: "weather",
@@ -75,6 +69,22 @@ app.get("/about", (req, res) => {
     title: "weather",
     name: "ahmed Hosney",
     helpText: "This is some helpful text.",
+  });
+});
+
+app.get("/weather", async (requestMain, responseMain) => {
+  geoCode(requestMain.query.address, (result, error) => {
+    if (error) {
+      // console.log("error1");
+
+      return responseMain.send({ error });
+    }
+    forecast(result, (res, err) => {
+      if (err) {
+        return responseMain.send({ error: err });
+      }
+      responseMain.send({ forcast: res, location: result.location });
+    });
   });
 });
 

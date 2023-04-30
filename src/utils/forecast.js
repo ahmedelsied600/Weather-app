@@ -3,7 +3,7 @@ const axios = require("axios");
 function forecast(dataLocation, callback) {
   axios
     .get(
-      `http://api.weatherstack.com/current?access_key=9e0722da3d51ae02921324a66ade7568&query=${dataLocation.latitude},${dataLocation.longitude}`
+      `http://api.weatherstack.com/current?access_key=a99291235e32a11523ff7cf8c73202b1&query=${dataLocation.latitude},${dataLocation.longitude}`
     )
     .then((response) => {
       if (!response.data.error) {
@@ -18,14 +18,10 @@ function forecast(dataLocation, callback) {
           undefined,
           "Unable to find weather for this location. Try another search."
         );
-        // console.log(
-        //   "Unable to find weather for this location. Try another search."
-        // );
       }
     })
     .catch((error) => {
       callback(undefined, "unable to connect to the weather services!");
-      // console.log("unable to connect to the weather services!");
     });
 }
 
